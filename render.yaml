@@ -1,0 +1,27 @@
+# This file describes the deployment for a render.com One Click app install
+# It builds the unified dockerfile, creates a DB connects the Flagsmith server to the DB
+
+services:
+  # The Telegram Filter Bot 
+  - type: web
+    name: FilterBoy
+    env: docker
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: DATABASE_URL
+        fromDatabase:
+          name: filterbot-database
+          property: connectionString
+      - key: DJANGO_ALLOWED_HOSTS
+        value: '*'
+      - key: GUNICORN_TIMEOUT
+        value: 300
+
+databases:
+  # The Filter bot Database
+  - name: filterbot-database
+    databaseName: filterbot-database
+    user: filteruser
+    ipAllowList: []
